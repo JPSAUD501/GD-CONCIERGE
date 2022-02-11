@@ -2,7 +2,7 @@ const { loadData, saveData } = require("./data.js");
 
 const messageChannelId = "941517956242878514";
 const defaultBackChannelId = "800214261607301130";
-const logChannelId = "941347336095936532";
+const logChannelId = "919484652736094218";
 
 const video = {
     "link": "https://youtu.be/8okLkFLBD8s",
@@ -78,13 +78,19 @@ async function startMessage(client, guildId, datafile){
         if(timer.messageStart == null){
             //New player
             membersWaiting[list[i]].done = true;
+            const message = await logChannel.send("Iniciando a mensagem de boas-vindas para o usuário: " + qMember.user.username + " (1)").catch();
             await client.distube.play(messageChannel, video.link, {
                 member: qMember,
-                textChannel: logChannel
+                textChannel: logChannel, message
               });
+            const queue = await client.distube.getQueue(message);
+            await queue.pause();
             await qMember.voice.setChannel(messageChannel).catch(err => {
                 console.log(err);
             });
+            await queue.seek(0);
+            await queue.resume();
+            await message.edit("Iniciando a mensagem de boas-vindas para o usuário: **" + qMember.user.username + "** (2)").catch();
             data.members[qMember.user.id].welcomed = true;
             saveData(datafile, data);
             timer.messageStart = Date.now();
@@ -93,8 +99,10 @@ async function startMessage(client, guildId, datafile){
                 setTimeout(async function(){
                     console.log("Player timeout!");
                     timer.messageStart = null;
+                    await message.edit("Iniciando a mensagem de boas-vindas para o usuário: **" + qMember.user.username + "** (4)").catch();
                 }, 10000);
                 delete membersWaiting[list[i]];
+                await message.edit("Iniciando a mensagem de boas-vindas para o usuário: **" + qMember.user.username + "** (3)").catch();
                 if(!qMember.voice.channel) return;
                 if(qMember.voice.channel.id !== messageChannelId) return;
                 await qMember.voice.setChannel(qChannel).catch(err => {
