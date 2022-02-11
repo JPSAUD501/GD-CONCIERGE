@@ -1,7 +1,7 @@
 require('dotenv').config();
 const Discord = require('discord.js');
 const { DisTube } = require('distube');
-const { updateData } = require("./functions/data.js");
+const { updateData, newMemberUpdateData, oldMemberUpdateData } = require("./functions/data.js");
 const { memberChennelMove, startMessage } = require("./functions/message.js");
 const guildId = "720275637415182416";
 const datafile = "./members.json";
@@ -56,6 +56,12 @@ const client = new Discord.Client({
 
     newMemberUpdateData(client, member, guildId, datafile);
   
+  });
+
+  client.on('guildMemberRemove', member => {
+
+    oldMemberUpdateData(client, guildId, datafile);
+
   });
 
   client.on(`voiceStateUpdate`, (oldState, newState) => {

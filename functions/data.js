@@ -54,19 +54,37 @@ async function newMemberUpdateData(client, member, guildId, datafile){
         data.members = {};
         saveData(datafile, data);
     }
-    if(!data.members[member.user.id]){
-        console.log("New member!", member.user.username);
-        data.members[member.user.id] = {
-            "id": member.user.id,
-            "name": member.user.username,
-            "welcomed": false
-        }
-        saveData(datafile, data);
+    console.log("New member!", member.user.username);
+    data.members[member.user.id] = {
+        "id": member.user.id,
+        "name": member.user.username,
+        "welcomed": false
     }
+    saveData(datafile, data);
+}
+
+async function oldMemberUpdateData(client, guildid, datafile){
+  let data = loadData(datafile);
+  const guild = await client.guilds.cache.get(guildid);
+  var list = Object.keys(data.members);
+  var allmembers = [];
+  guild.members.cache.each(member => {
+    allmembers.push(member.id);
+  })
+  for (const i in list){
+    if (!allmembers.includes(list[i])) {
+      console.log(data.members[list[i]]);
+      delete data.members[list[i]];
+      console.log("Deleting old member from data!")
+      saveData(datafile, data)
+    }
+  }
 }
 
   module.exports = {
     loadData: loadData,
     saveData: saveData,
-    updateData: updateData
+    updateData: updateData,
+    newMemberUpdateData: newMemberUpdateData,
+    oldMemberUpdateData: oldMemberUpdateData
 };

@@ -4,12 +4,10 @@ const messageChannelId = "941517956242878514";
 const defaultBackChannelId = "800214261607301130";
 const logChannelId = "941347336095936532";
 
-const longVideo = {
-    "link": "https://youtu.be/cul2x2E26pA",
-    "time": "77000"
+const video = {
+    "link": "https://youtu.be/8okLkFLBD8s",
+    "time": "35000"
 };
-
-const waitTime = 5000;
 
 var timer = {
     messageStart: null,
@@ -80,7 +78,7 @@ async function startMessage(client, guildId, datafile){
         if(timer.messageStart == null){
             //New player
             membersWaiting[list[i]].done = true;
-            await client.distube.play(messageChannel, longVideo.link, {
+            await client.distube.play(messageChannel, video.link, {
                 member: qMember,
                 textChannel: logChannel
               });
@@ -105,11 +103,11 @@ async function startMessage(client, guildId, datafile){
                         console.log(err);
                     });
                 });
-            }, longVideo.time);
+            }, video.time);
         } /*else if(((timer.messageStart - Date.now()) <= waitTime)){
             //Old player
             console.log("Old player!");
-            let elapsedTime = (longVideo.time - (timer.messageStart - Date.now()));
+            let elapsedTime = (video.time - (timer.messageStart - Date.now()));
             await qMember.voice.setChannel(messageChannel).catch(err => {
                 console.log(err);
             });;
