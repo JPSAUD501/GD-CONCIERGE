@@ -6,7 +6,7 @@ const logChannelId = "919484652736094218";
 
 const video = {
     "link": "https://youtu.be/8okLkFLBD8s",
-    "time": "34000"
+    "time": "33500"
 };
 
 var timer = {
