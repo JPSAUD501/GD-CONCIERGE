@@ -6,7 +6,7 @@ const logChannelId = "919484652736094218";
 
 const video = {
     "link": "https://youtu.be/8okLkFLBD8s",
-    "time": "35000"
+    "time": "34000"
 };
 
 var timer = {
@@ -78,7 +78,7 @@ async function startMessage(client, guildId, datafile){
         if(timer.messageStart == null){
             //New player
             membersWaiting[list[i]].done = true;
-            const message = await logChannel.send("Iniciando a mensagem de boas-vindas para o usuário: " + qMember.user.username + " (1)").catch();
+            const message = await logChannel.send(`Iniciando a mensagem de boas-vindas para o usuário: **"${qMember.user.username}" - ${qMember.toString()}** (1)`).catch();
             await client.distube.play(messageChannel, video.link, {
                 member: qMember,
                 textChannel: logChannel, message
@@ -90,7 +90,7 @@ async function startMessage(client, guildId, datafile){
             });
             await queue.seek(0);
             await queue.resume();
-            await message.edit("Iniciando a mensagem de boas-vindas para o usuário: **" + qMember.user.username + "** (2)").catch();
+            await message.edit(`Iniciando a mensagem de boas-vindas para o usuário: **"${qMember.user.username}" - ${qMember.toString()}** (2)`).catch();
             data.members[qMember.user.id].welcomed = true;
             saveData(datafile, data);
             timer.messageStart = Date.now();
@@ -99,12 +99,12 @@ async function startMessage(client, guildId, datafile){
                 setTimeout(async function(){
                     console.log("Player timeout!");
                     timer.messageStart = null;
-                    await message.edit("Iniciando a mensagem de boas-vindas para o usuário: **" + qMember.user.username + "** (4)").catch();
-                }, 10000);
+                    await message.edit(`Iniciando a mensagem de boas-vindas para o usuário: **"${qMember.user.username}" - ${qMember.toString()}** (4)`).catch();
+                }, 5000);
                 delete membersWaiting[list[i]];
-                await message.edit("Iniciando a mensagem de boas-vindas para o usuário: **" + qMember.user.username + "** (3)").catch();
-                if(!qMember.voice.channel) return;
-                if(qMember.voice.channel.id !== messageChannelId) return;
+                await message.edit(`Iniciando a mensagem de boas-vindas para o usuário: **"${qMember.user.username}" - ${qMember.toString()}** (3)`).catch();
+                if(!qMember.voice.channel) return logChannel.send(`O usuário: **"${qMember.user.username}" - ${qMember.toString()}** saiu dos canais de audio do servidor durante a mensagem!`).catch();
+                if(qMember.voice.channel.id !== messageChannelId) return logChannel.send(`O usuário: **"${qMember.user.username}" - ${qMember.toString()}** saiu do canal durante a mensagem!`).catch();
                 await qMember.voice.setChannel(qChannel).catch(err => {
                     console.log(err);
                     qMember.voice.setChannel(defaultBackChannel).catch(err => {
