@@ -1,6 +1,5 @@
 require('dotenv').config();
 const Discord = require('discord.js');
-const { DisTube } = require('distube');
 const { updateData, newMemberUpdateData, oldMemberUpdateData } = require("./functions/data.js");
 const { memberChennelMove, startMessage } = require("./functions/message.js");
 const guildId = "720275637415182416";
@@ -29,16 +28,6 @@ const client = new Discord.Client({
           "DIRECT_MESSAGE_REACTIONS",
           "DIRECT_MESSAGE_TYPING",
         ]
-  });
-
-  client.distube = new DisTube(client, {
-    leaveOnStop: true,
-    leaveOnFinish: true,
-    emitNewSongOnly: true,
-    emitAddSongWhenCreatingQueue: false,
-    emitAddListWhenCreatingQueue: false,
-    plugins: [],
-    youtubeDL: false
   });
 
   client.on("ready", () => {
