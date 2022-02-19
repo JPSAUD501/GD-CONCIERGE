@@ -2,6 +2,7 @@ require('dotenv').config();
 const Discord = require('discord.js');
 const { updateData, newMemberUpdateData, oldMemberUpdateData } = require("./functions/data.js");
 const { memberChennelMove, startMessage } = require("./functions/message.js");
+const { commands } = require("./functions/commands.js");
 const guildId = "720275637415182416";
 const datafile = "./members.json";
 
@@ -30,32 +31,38 @@ const client = new Discord.Client({
         ]
   });
 
-  client.on("ready", () => {
+  client.on("ready", async () => {
     
     console.log("Bot is ready!");
 
-    updateData(client, guildId, datafile);
+    await updateData(client, guildId, datafile);
 
-    startMessage(client, guildId, datafile);
+    await startMessage(client, guildId, datafile);
     const interval1 = setInterval(async function(){startMessage(client, guildId, datafile);}, 1000);
   
   });
 
-  client.on('guildMemberAdd', member => {
+  client.on('guildMemberAdd', async member => {
 
-    newMemberUpdateData(client, member, guildId, datafile);
+    await newMemberUpdateData(client, member, guildId, datafile);
   
   });
 
-  client.on('guildMemberRemove', member => {
+  client.on('guildMemberRemove', async member => {
 
-    oldMemberUpdateData(client, guildId, datafile);
+    await oldMemberUpdateData(client, guildId, datafile);
 
   });
 
-  client.on(`voiceStateUpdate`, (oldState, newState) => {
+  client.on(`voiceStateUpdate`, async (oldState, newState) => {
 
-    memberChennelMove(oldState, newState, datafile);
+    await memberChennelMove(oldState, newState, datafile);
+
+  });
+
+  client.on('messageCreate', async message => {
+
+    await commands(client, guildId, datafile, message);
 
   });
 

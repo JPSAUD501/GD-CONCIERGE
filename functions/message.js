@@ -20,11 +20,13 @@ async function wait(ms){
 async function memberChennelMove(oldState, newState, datafile){
     try{
         if(!newState) return;
+        await wait(5000);
         if(newState.channelId == null) return;
-        if(oldState.channelId == newState.channelId) return;
         const guild = await newState.guild.fetch();
         const member = await guild.members.fetch(newState.id);
         if(member.user.bot) return;
+        if(newState.selfDeaf == true) return console.log("Member is deaf!");
+        if(oldState.selfDeaf && !newState.selfDeaf){} else if(oldState.channelId == newState.channelId) return;
         let data = loadData(datafile);
         if(!data.members){
             data.members = {};
@@ -93,39 +95,50 @@ async function startMessage(client, guildId, datafile){
         if(timer.messageStart == null){
             //New player
             membersWaiting[list[i]].done = true;
-            const message = await logChannel.send(`Iniciando a mensagem de boas-vindas para o membro: **"${qMember.user.username}" - ${qMember.toString()}** (1)`).catch();
+            const message = await logChannel.send(`Iniciando a mensagem de boas-vindas para o membro: **"${qMember.user.username}" - "${qMember.toString()}"** (1)`).catch();
             const player = await discordVoice.createAudioPlayer();
-            console.log(__dirname)
             const resource = await discordVoice.createAudioResource(fs.createReadStream(join(__dirname, "audio.webm")), {
                 inputType: discordVoice.StreamType.WebmOpus,
             });
-            console.log(resource);
             const connection = await discordVoice.joinVoiceChannel({
                 channelId: messageChannel.id,
                 guildId: messageChannel.guild.id,
                 adapterCreator: messageChannel.guild.voiceAdapterCreator,
             });
-            await qMember.voice.setChannel(messageChannel).catch(err => {
-                console.log(err);
-            });
-            await wait(500);
-            await player.play(resource);
-            await connection.subscribe(player);
             timer.messageStart = Date.now();
+            
+            await connection.subscribe(player);
+            await player.play(resource);
+            while(player._state.status !== "playing") if(Date.now() - timer.messageStart > 10000) return async function(){
+                delete membersWaiting[list[i]];
+                await discordVoice.getVoiceConnection(messageChannel.guild.id).disconnect();
+                await wait(2000);
+                timer.messageStart = null;
+            }(); else {
+                console.log("Loading... " + player._state.status);
+                await wait(50);
+            }
+            await qMember.voice.setChannel(messageChannel).catch(err => {
+                //console.log(err);
+            });
             data.members[qMember.user.id].welcomed = true;
             saveData(datafile, data);
-            await message.edit(`Iniciando a mensagem de boas-vindas para o membro: **"${qMember.user.username}" - ${qMember.toString()}** (2)`).catch();
-            await wait(33500);
+            await message.edit(`Iniciando a mensagem de boas-vindas para o membro: **"${qMember.user.username}" - "${qMember.toString()}"** (2)`).catch();
+            while((player._state.status !== "idle") && (Date.now()-timer.messageStart < 50000)){
+                console.log("Waiting for message to end!");
+                console.log(player._state.status);
+                await wait(250);
+            }
             console.log("End of audio!");
-            await message.edit(`Iniciando a mensagem de boas-vindas para o membro: **"${qMember.user.username}" - ${qMember.toString()}** (4)`).catch();
+            await message.edit(`Iniciando a mensagem de boas-vindas para o membro: **"${qMember.user.username}" - "${qMember.toString()}"** (4)`).catch();
             delete membersWaiting[list[i]];
             const backToChannel = async function(){
-                if(!qMember.voice.channel) return logChannel.send(`O membro: **"${qMember.user.username}" - ${qMember.toString()}** saiu dos canais de audio do servidor durante a mensagem!`).catch();
-                if(qMember.voice.channel.id !== messageChannelId) return logChannel.send(`O membro: **"${qMember.user.username}" - ${qMember.toString()}** saiu do canal durante a mensagem!`).catch();
+                if(!qMember.voice.channel) return logChannel.send(`O membro: **"${qMember.user.username}" - "${qMember.toString()}"** saiu dos canais de audio do servidor durante a mensagem!`).catch();
+                if(qMember.voice.channel.id !== messageChannelId) return logChannel.send(`O membro: **"${qMember.user.username}" - "${qMember.toString()}"** saiu do canal durante a mensagem!`).catch();
                 await qMember.voice.setChannel(qChannel).catch(err => {
-                    console.log(err);
+                    //console.log(err);
                     qMember.voice.setChannel(defaultBackChannel).catch(err => {
-                        console.log(err);
+                        //console.log(err);
                     });
                 });
             }
