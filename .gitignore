@@ -1,4 +1,5 @@
 *.json
 *.env
 !spec/*.json
-dist/
+dist
+node_modules
