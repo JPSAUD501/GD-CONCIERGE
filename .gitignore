@@ -1,4 +1,5 @@
-*.json
+members.json
+package.json
 *.env
 /dist
 /node_modules
