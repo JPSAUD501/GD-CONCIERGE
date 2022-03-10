@@ -1,29 +1,29 @@
 {
   "name": "gd-concierge",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/JPSAUD501/GD-CONCIERGE.git"
-  },
+  "description": "Discord Bot - Play audio file when new member joins the server ",
+  "main": "index.ts",
+  "repository": "https://github.com/JPSAUD501/GD-CONCIERGE.git",
   "author": "João Pedro Saud Cardoso",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/JPSAUD501/GD-CONCIERGE/issues"
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start": "ts-node index.ts"
   },
-  "homepage": "https://github.com/JPSAUD501/GD-CONCIERGE#readme",
   "dependencies": {
     "@discordjs/opus": "^0.7.0",
+    "@discordjs/rest": "^0.3.0",
     "@discordjs/voice": "^0.8.0",
+    "discord-api-types": "^0.29.0",
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",
-    "ffmpeg": "^0.0.4",
-    "ffmpeg-static": "^4.4.1",
+    "ffmpeg-static": "^5.0.0",
     "libsodium-wrappers": "^0.7.9",
-    "opusscript": "^0.0.8"
+    "opusscript": "^0.0.8",
+    "ts-node": "^10.7.0",
+    "tweetnacl": "^1.0.3"
+  },
+  "devDependencies": {
+    "typescript": "^4.6.2"
   }
 }
