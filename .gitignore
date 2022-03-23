@@ -1,5 +1,6 @@
 members.json
 package.json
 *.env
+*.log
 /dist
 /node_modules
